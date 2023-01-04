@@ -18,6 +18,18 @@ public class UncheckedAppTest {
                 .isInstanceOf(RuntimeSQLException.class);
     }
 
+    @Test
+    void printEx() {
+        Controller controller = new Controller();
+
+        try {
+            controller.request();
+        } catch (Exception e) {
+//            e.printStackTrace();
+            log.info("ex", e);
+        }
+    }
+
     static class Controller {
         Service service = new Service();
 
@@ -63,8 +75,19 @@ public class UncheckedAppTest {
     }
 
     static class RuntimeSQLException extends RuntimeException {
+        public RuntimeSQLException() {
+        }
+
         public RuntimeSQLException(Throwable cause) {
             super(cause);
         }
     }
 }
+
+/**
+ * 예외를 포함하지 않아서 기존에 발생한 java.sql.SQLException 과 스택 트레이스를 확인할 수 없다.
+ * 변환한 RuntimeSQLException 부터 예외를 확인할 수 있다.
+ * 만약 실제 DB에 연동했다면 DB에서 발생한 예외를 확인할 수 없는 심각한 문제가 발생한다.
+ *
+ * 예외를 전환할 때는 꼭! 기존 예외를 포함하자 // line 62
+ */
